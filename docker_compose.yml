@@ -1,0 +1,22 @@
+version: '3'
+services:
+  db:
+    image: postgres:latest
+    container_name: movielens_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: movielens
+    volumes:
+      - ./scripts:/docker-entrypoint-initdb.d/
+    ports:
+      - "5432:5432"
+  
+  analytics:
+    build: ./analytics
+    container_name: movielens_analytics
+    depends_on:
+      - db
+    volumes:
+      - ./scripts:/app/scripts
+    command: python3 /app/scripts/analyze.py
